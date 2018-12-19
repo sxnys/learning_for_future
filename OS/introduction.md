@@ -36,11 +36,13 @@
 ----------
 
 ## 三、系统调用
-如果一个进程在 **用户态** 需要使用 **内核态** 的功能，就进行 **系统调用** 从而陷入内核，由操作系统代为完成。
+如果一个进程在 **用户态** 需要使用 **内核态** 的功能，就进行 **系统调用** 从而陷入内核，由操作系统代为完成。  
 
-<center>
-![系统调用流程](https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/tGPV0.png)
-</center>  
+<br>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/tGPV0.png"/></div> 
+
+<br>
 
 ### Linux的主要系统调用
 **进程控制：** ```fork()``` , ```exit()``` , ```wait()```  
@@ -59,9 +61,11 @@
 
 用户态和内核态之间频繁的切换会造成一定的**性能损失**。
 
-<center>
-![微内核结构](https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/2_14_microkernelArchitecture.jpg)
-</center>
+<br>
+
+<div align="center"> <img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/2_14_microkernelArchitecture.jpg"/></div> 
+
+<br>
 
 ----------
 
