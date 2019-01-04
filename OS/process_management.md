@@ -53,13 +53,14 @@
 <div align="center"> <img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/ProcessState.png"/></div> 
 
 `ready --> running` ：进程通过调度算法获得CPU时间
-`running --> ready` ：分配的CPU时间片用完，等待下一次调度
+`running --> ready` ：分配的CPU时间片用完，等待下一次调度    
 `running --> waiting` ：缺少需要的资源（不包括CPU时间）
 
 ----------
 
 ## 三、进程调度算法
-*不同环境的调度算法目标不同*
+*不同环境的调度算法目标不同*      
+
 1、批处理系统
 批处理系统没有太多的用户操作，调度算法目标是**保证吞吐量和周转时间**（从提交到终止的时间）
 - **先来先服务（First Come First Served, FCFS）**：按照请求的顺序进行调度
@@ -70,7 +71,7 @@
 
 - **最短剩余时间优先（Shortest Remaining Time Next, SRTN）**：按估计剩余时间最短的顺序进行调度
 
-2、交互式系统
+2、交互式系统         
 交互式系统有大量的用户交互操作，在该系统中调度算法的目标是**快速地进行响应**
 - **时间片轮转**
 将所有就绪进程按 **FCFS 的原则** 排成一个队列，每次调度时把 CPU 时间分配给队首进程，该进程可以执行一个时间片。当时间片用完时，由计时器发出时钟中断，调度程序便停止该进程的执行，并将它送往就绪队列的末尾，同时继续把 CPU 时间分配给队首的进程。
@@ -86,7 +87,7 @@
 
 <div align="center"> <img src="https://raw.githubusercontent.com/CyC2018/CS-Notes/master/docs/notes/pics/042cf928-3c8e-4815-ae9c-f2780202c68f.png"/></div> 
 
-3、实时系统
+3、实时系统         
 实时系统要求一个请求在一个确定时间内得到响应
 硬实时必须满足绝对的截止时间
 软实时可以容忍一定的超时
