@@ -1,5 +1,5 @@
 # 进程管理
-*[摘自 github CS-Notes - 计算机操作系统](https://github.com/CyC2018/CS-Notes/blob/master/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md "github CS-Notes - 计算机操作系统")*
+*[摘自 github CS-Notes - 计算机操作系统](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md "github CS-Notes - 计算机操作系统")*
 
 ----------
 
