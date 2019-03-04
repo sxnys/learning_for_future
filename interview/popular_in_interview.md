@@ -202,7 +202,7 @@ Socket 原理机制：
 
 **B+ 树作为文件系统索引和数据库索引结构的优势：**
 
-1. 单一节点能存储更多的元素，使得查询的 I/O 次数更少 
+1. 单一节点能存储更多的元素，使得查询的 **I/O 次数更少** 
 2. 所有查询都是要查到叶子节点，查询性能稳定 （B 树有可能只查到根节点，可能查到叶子节点，不稳定）
 3. 所有叶子节点形成有序列表，便于范围查询（B 树则要不断中序遍历）      
 
@@ -252,11 +252,11 @@ Socket 原理机制：
 2. 在经常需要搜索的列、经常用在 ```WHERE``` 子句中的列、经常需要排序的列上创建索引
 3. 避免对索引列进行计算（包括施加函数）
 4. 创建索引的列需要设置成 ```NOT NULL``` 
-5. 经常需要UDI操作的数据列尽量不使用索引
+5. 经常需要CUD操作的数据列尽量不使用索引（CRUD，增删改查操作）
 
 **不能滥用索引：**
 
-1. 对数据进行UDI操作时，索引也需要动态维护，降低了数据维护的效率
+1. 对数据进行CUD操作时，索引也需要动态维护，降低了数据维护的效率
 2. 索引需要占物理空间，每个索引都是以文件的形式存在物理空间中
 3. 创建维护索引耗费时间，数据量越大耗费时间越多
 
@@ -359,7 +359,7 @@ MVCC（多版本**并发**控制），**读写不阻塞**，通过某种机制�
 
 3. **大表拆分：** 垂直拆分 —— 将列比较多的表拆分成多个表           
 
-   ​                    水平拆分 —— 保持表结构不变，将存储数据分片，可以分散到不同的表或库中
+   ​                    水平拆分 —— 保持表结构不变，将存储数据分片，可以分散到不同的表或库中（分片）
 
 ### 14、MyISAM 和 InnoDB 的区别
 
@@ -371,6 +371,12 @@ MVCC（多版本**并发**控制），**读写不阻塞**，通过某种机制�
 6. 需要事务支持，并有高频率的并发读取，InnoDB 合适；数据量很大并且不需要支持事务，MyISAN合适
 
 ## 三、操作系统
+
+[操作系统概述](https://github.com/sxnys/learning_for_future/blob/master/OS/introduction.md)
+
+[进程管理](https://github.com/sxnys/learning_for_future/blob/master/OS/process_management.md)
+
+[内存管理](https://github.com/sxnys/learning_for_future/blob/master/OS/process_management.md)
 
 ## 四、其他
 
@@ -384,19 +390,177 @@ MVCC（多版本**并发**控制），**读写不阻塞**，通过某种机制�
 
 ### 2、Docker
 
+> **Docker** 是一个开源的应用容器引擎，基于 Go 语言，是一个Linux容器。可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化
 
+Docker 基于**守护进程**：直接与主操作系统进行通信，为各个Docker容器动态分配资源；将容器与主操作系统隔离，并将各个容器互相隔离。
 
-### 3、Ngnix、Apache、Tomcat、uWsgi
+Docker容器可以在数毫秒内启动，可以节省大量的磁盘空间以及其他系统资源；而**虚拟机基于虚拟机管理系统，**启动需要数分钟，有臃肿的**从操作系统**，占用大量系统资源。所以，Docker是进程级别的资源隔离，虚拟机是操作系统级别的隔离。
 
+**三个基本概念：**
 
+- **Image（镜像）**：一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）,不包含任何动态数据，其内容在构建之后也不会被改变。
+- **Container（容器）**：Docker 容器通过 Docker 镜像来创建，所以也是一个特殊的文件系统，只不过多了一层可读可写的一层。
+- **Repository（仓库）**：集中存放镜像文件
+
+**创建镜像的两种方法：**
+
+1. 更新：从已经创建的容器中更新镜像并提交
+
+2. 构建：使用 Dockerfile 构建一个新的镜像   `docker image build -t [username]/[repository]:[tag] .`
+
+   部署 tomcat app：
+
+   - 拉取 tomcat 镜像   `docker pull tomcat:VERSION`
+   - 启动 tomcat 容器   `docker run tomcat:VERSION`
+   - 拷贝 War 包到启动的 tomcat 容器对应的目录中   `docker cp WAR TOMCAT_CONTAINER:WEBAPPS`     
+   - 将容器做成镜像   `docker commit -m  "DESCRIPTION" -a "AUTHOR" CONTAINER IMAGE[:TAG]`
+   - 发布镜像   `docker push IMAGE[:TAG]` 
+
+[Docker 核心技术与实现原理](https://draveness.me/docker)
+
+**命名空间 (namespaces)** 用于分离进程树、网络接口、挂载点以及进程间通信等资源的方法。
+
+**Control Groups（CGroups）**能够隔离宿主机器上的物理资源，例如 CPU、内存、磁盘 I/O 和网络带宽。
+
+### 3、Web 服务器
+
+> **Web（HTTP）服务器：** 关注 http 协议层面的传输和控制访问，有代理、负载均衡等功能，主要处理静态资源。Ngnix、Apache 是 HTTP 服务器，基于 REST 架构风格        
+>
+> **Web 应用服务器：** 保证应用能在应用服务器正常运行，要支持应用相关规范，也集成了部分http server的功能。Tomcat、uWsgi 属于 Web 应用服务器         
+
+#### Ngnix ####
+
+> Nginx 是一款自由的、开源的、高性能的 **HTTP 服务器**和**反向代理服务器**；同时也是一个IMAP、POP3、SMTP 代理服务器；Nginx 可以作为一个 HTTP 服务器进行网站的发布处理，也可以作为反向代理进行负载均衡的实现。
+
+**正向代理（代理的是客户端）：**
+
+- 客户端非常明确要访问的服务器地址，代理需要在客户端机器上配置
+- 屏蔽或隐藏了真实客户端信息（服务器只知道请求来自哪个代理服务器，不知道来自哪个客户端）
+- 访问无法访问的资源、用作缓存、客户端上网认证、上网行为管理
+
+**反向代理（代理的是服务端）：**
+
+多个客户端给服务端发送请求，先有代理服务器接收，然后代理服务器按照一定的规则分发给各个业务处理服务器。请求的来源（各个客户端）明确，请求由哪台服务器处理不明确。
+
+- 反向代理对外透明，客户端无感代理的存在
+- 反向代理隐藏了服务器的信息
+- 保证内网的安全、负载均衡
+
+**负载均衡：**
+
+- 负载量：客户端发送的、反向代理服务器接收到的请求数量           
+- 均衡规则：请求数量分发到不同服务器的规则              
+- 负载均衡：反向代理服务器接收到的请求按照均衡规则进行分发            
+- 类型：硬件负载均衡（硬负载，成本高，安全稳定）、软件负载均衡（软负载，消息队列分发机制）          
+
+Ngnix 支持的负载均衡调度算法：
+
+1. **weight 轮询**（默认）：ngnix 按序逐一分配请求到后端服务器（宕机被踢出队列），给后端服务器设置权重值（根据硬件配置），用于调整请求分配率
+2. **ip_hash**：每个请求按照来源客户端 IP 进行 Hash，分配到之前访问的同一后端服务器，一定程度上解决了集群部署环境下 session 共享的问题
+3. **fair 智能调整调度**：动态地根据后端服务器的响应时间和处理效率进行均衡分配（需要安装 upstream_fair 模块）
+4. **url_hash**：按照访问 url 的 hash 结果分配请求，每个请求的 url 指向后端固定的某个服务器，ngnix 作为静态服务器时提高缓存效率（需要安装 hash 软件包）
+
+#### Apache
+
+与 Ngnix 比较：
+
+- apache 的 rewrite 更强大
+- apache 更稳定
+- apache 处理动态请求有优势，ngnix 适合做静态和反向代理
+- apache 是同步多进程模型，ngnix 是异步的（epoll），支持高并发，性能更好
+- 通用方案：ngnix 前端抗并发，apache 后端集群
+
+#### Tomcat
+
+Tomcat是应用（java）服务器，只是一个servlet容器，是Apache的扩展但又独立运行
+
+#### uWsgi
+
+> **CGI**：通用网关接口，规定一个程序该如何与web服务器程序之间通信从而可以让这个程序跑在web服务器上      
+>
+> **WSGI**：Python Web 服务网关接口，用在 python web 框架编写的应用程序与后端服务器之间的规范       
+>
+> **uWSGI**：一个Web服务器（WSGI Server），实现了fastcgi、uwsgi、http 等协议。用于接收前端服务器转发的动态请求并处理后发给 web 应用程序
+>
+> **uwsgi**：uWSGI 服务器实现的独有的协议，是一种传输协议
+
+部署Django App：
+
+1. nginx 做为代理服务器：负责静态资源发送（js、css、图片等）、动态请求转发以及结果的回复；
+
+2. uWSGI 做为后端服务器：负责接收 nginx 请求转发并处理后发给 Django 应用以及接收 Django 应用返回信息转发给 nginx，ngnix 和 uWSGI 之间通过 uwsgi 传输协议通信；
+
+3. Django 应用收到请求后处理数据并渲染相应的返回页面给 uWSGI 服务器。
+
+![img](https://images2018.cnblogs.com/blog/720785/201803/720785-20180315175024706-1983173921.jpg)
 
 ### 4、J2EE
 
+> Java 2平台企业版（Java 2 Platform Enterprise Edition），本质上是一种 Java Web 服务开发标准
 
+主要技术：**Servlet**、**JSP**、**JDBC**、**EJB**
+
+应用分层：**领域对象层**（Domain Object，即跟数据库表对应的Java对象）、**DAO 层**（数据访问对象）、**业务逻辑层**（xxxManager）、**控制器层**（xxxServlet）、**表现层**（JSP）
+
+处理请求和发送响应的过程是由Servlet来完成的，Tomcat是一个Servlet/JSP容器
+
+servlet 生命周期：加载和实例化、初始化`init()`、请求处理（服务）`service()`、服务终止（销毁）`destroy()`
+
+Hibernate：一种**ORM框架**，在DAO层操作XML，将数据封装到XML文件上，在DAO层使用原生JDBC连接数据库           
+
+ **MVC 和 MTV 的区别：**
+
+MVC 中的 View 的目的是“呈现哪一个数据”，而 MTV 的 View 的目的是“数据如何呈现”。
+
+MTV 也就是把 MVC 中的 View 分成了视图（展现哪些数据）和模板（如何展现）2个部分，而Contorller这个要素由框架自己来实现了，我们需要做的就是把（带正则表达式的）URL对应到视图就可以了，通过这样的URL配置，系统将一个请求发送到一个合适的视图。
 
 ### 5、MongoDB
 
 > MongoDB，一个基于分布式文件存储的开源数据库系统。旨在为WEB应用提供可扩展的高性能数据存储解决方案。将数据存储为一个文档，数据结构由键值(key=>value)对组成。MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。
+
+- **相关概念**
+
+|          SQL          |          MongoDB          |
+| :-------------------: | :-----------------------: |
+|  数据库（database）   |    数据库（database）     |
+|   数据库表（table）   |    集合（collection）     |
+|   数据记录行（row）   |     文档（document）      |
+|    数据字段（col）    |        域（field）        |
+|     索引（index）     |       索引（index）       |
+| 表连接（table joins） |          不支持           |
+|  主键（primary key）  | 自动设置 `_id` 字段为主键 |
+
+- **相关指令**
+
+1. **创建 \ 删除数据库：**`use DATABASE_NAME`  ,    `db.dropDatabase()`
+2. **创建 \ 删除集合：**`db.createCollotion(name, [options])` （插入文档时会默认创建集合） ,    `db.COLLECTION_NAME.drop()`
+3. **创建文档：**`db.COLLECTION_NAME.insert(document)`
+4. **查询文档：**`db.COLLECTION_NAME.find([query], [projection])`
+5. **创建索引：**`db.COLLECTION_NAME.createIndex(keys, [options])`，key值为创建索引的字段，1表示升序创建，-1表示降序创建
+
+- **MongoDB复制（副本集 replica set）**
+
+1. **目的：** 保障数据的安全性、高可用性、灾难恢复、无需停机维护、分布式读取数据              
+
+2. **原理：** 至少需要两个节点，主节点负责处理客户端请求，其余都是从节点，负责复制主节点上的数据（一主一从、一主多从）。主节点将在其上进行的所有操作**存在oplog**中，从节点**定期轮询**主节点获取这些操作，对自己的数据副本执行这些操作。                     
+
+3. **特征：** 是N个节点的**集群**、任何节点都可以作为主节点、所有写操作都在主节点、自动故障转移、自动恢复           
+
+4. **操作指令：** （设置）`mongod --port PORT --dbpath DB_PATH --replSet REPLICA_SET_NAME`   （添加节点）`REPLICA_SET_NAME.add(HOST:PORT)` （是否是主节点）`REPLICA_SET_NAME.isMaster`          
+
+​        **常见的主从在主机宕机后所有服务将停止，而MongoDB副本集在主机宕机后，副本会接管主节点成为主节点，不会出现宕机的情况。**             
+
+- **MongoDB 分片**
+
+​        **分片**是 MongoDB 中的另**一种集群**，满足数据量大量增长的需求，通过在多台机器上**分割数据**，使得数据库系统能存储和处理更多的数据。
+
+​        涉及到三个主要组件：
+
+1. **Shard：** 分片，存储实际的数据库，一个 shard 可以有一个副本集承担
+2. **Config Server：** mongodb 实例，存储整个集群元数据
+3. **Query Routers： ** 前端路由，客户端接入点
+
+- [MongoDB 索引为什么用 B 树 而不是 B+ 树？](https://blog.csdn.net/ahjxhy2010/article/details/80339510)
 
 ### 6、Git
 
@@ -456,6 +620,10 @@ merge：将内容合并到当前分支
 ### 10、Linux
 
 
+
+### 11、I/O 模型
+
+[I/O模型](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/Socket.md)
 
 
 
