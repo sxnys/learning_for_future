@@ -376,6 +376,10 @@ MVCC（多版本**并发**控制），**读写不阻塞**，通过某种机制�
 
 ### 1、Redis
 
+> NoSQL：非关系型的数据库，用于超大规模数据的存储。
+>
+> NoSQL分类：列存储、文档存储（MongoDB）、key-value存储（Redis）、图存储、对象存储、xml存储
+
 
 
 ### 2、Docker
@@ -392,7 +396,7 @@ MVCC（多版本**并发**控制），**读写不阻塞**，通过某种机制�
 
 ### 5、MongoDB
 
-
+> MongoDB，一个基于分布式文件存储的开源数据库系统。旨在为WEB应用提供可扩展的高性能数据存储解决方案。将数据存储为一个文档，数据结构由键值(key=>value)对组成。MongoDB 文档类似于 JSON 对象。字段值可以包含其他文档，数组及文档数组。
 
 ### 6、Git
 
@@ -417,9 +421,29 @@ merge：将内容合并到当前分支
 
 [Git 常见面试题](http://blog.jobbole.com/114297/)
 
-### 7、Restful
+### 7、RESTful API
 
+> REST：表征性状态转移。更好地使用现有Web标准中的一些准则和约束。         
+>
+> RESTful：符合REST的约束条件和原则，最流行的 API 设计规范，用于 Web 数据接口的设计         
+>
+> API 设计理念：URL （名词）来定位资源，HTTP 动词（GET,POST,DELETE,...）来描述操作
 
+**URL 设计**：
+
+- 客户端发出的操作指令都是 **动词 + 宾语** 的结构（HTTP 请求行）。`GET /articles`
+- 宾语就是 API 的 URL，是 HTTP 动词作用的对象，应该是名词，不能是动词
+- 客户端发出的请求方法用 POST 模拟 PUT、PATCH、DELETE 时，加上 `X-HTTP-Method_Override` 属性
+- 建议使用复数 URL，`GET /articles/2` 要好于 `GET /article/2`
+- 避免多级 URL，除了第一级其他级别都用查询字符串表达。`GET /authors/12?categories=2` 要好于 `GET authors/12/categories/2`
+
+**状态码要精确**，API 用不到 `1xx`、`301（永久重定向）`、`302（暂时重定向，还有307）`
+
+**服务器回应：**
+
+- API 返回的数据不应该是纯文本，而是 **JSON 对象**。服务器 HTTP 响应头中 `Content-Type` 属性和客户端 HTTP 请求头中 `Accept` 属性都要设为 `application/json`
+- 发送错误时，不要返回 200 状态码（错误信息在数据体中），而是要让状态码反映发生的错误，具体信息在数据体中
+- 在回应中给出相关链接，便于使用者下一步操作
 
 ### 8、分布式、集群、消息队列 ...
 
