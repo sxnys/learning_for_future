@@ -233,7 +233,7 @@ Session 的实现方式：
 >
 > Socket 通信流程：
 >
-> ![1553482270917](C:\Users\Sxn\AppData\Roaming\Typora\typora-user-images\1553482270917.png)
+> ![1553482270917](.\assets\1553482270917.png)
 
 Socket 原理机制：
 
